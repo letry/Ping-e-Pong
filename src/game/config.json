@@ -1,0 +1,23 @@
+{
+    "controllers": {
+        "player1": {
+            "keyEventMap": {
+                "w": "up",
+                "s": "down",
+                "a": "left",
+                "d": "right"
+            }
+        },
+        "player2": {
+            "keyEventMap": {
+                "ArrowUp": "up",
+                "ArrowDown": "down",
+                "ArrowLeft": "left",
+                "ArrowRight": "right"
+            }
+        },
+        "ball": {
+            
+        }
+    }
+}

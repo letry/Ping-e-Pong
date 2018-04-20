@@ -1,0 +1,27 @@
+{
+  "name": "ping-e-pong",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack --watch",
+    "develop": "NODE_ENV=development webpack-dev-server --hot --open"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^0.28.11",
+    "html-webpack-plugin": "^3.0.7",
+    "vue-loader": "^14.2.1",
+    "vue-template-compiler": "^2.5.16",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12",
+    "webpack-dev-server": "^3.1.1"
+  },
+  "dependencies": {
+    "json-templates": "^2.0.0",
+    "promise-event-emitter": "^0.1.0",
+    "promisify-event-emitter": "^0.1.0",
+    "vue": "^2.5.16"
+  }
+}
