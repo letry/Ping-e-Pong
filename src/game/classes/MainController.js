@@ -73,7 +73,9 @@ export default class {
     }
 
     hit(object, target) {
-
+        const delta = object.power - target.protection;
+        if (delta > 0) target.hp -= delta;
+        if (target.hp < 1) this.remove(target);
     }
 
     async startTicker(object) {
@@ -81,20 +83,34 @@ export default class {
         const config = this.objectTickerMap.get(object);
         config.isRun = true;
 
-        while (config.isRun) {
+        while (config.isRun && object.hp > 0) {
             await void function tryMove() {
                 const movePromise = controller.once('move');
                 controller.emit('canMove');
                 const direction = await movePromise();
+                const { barrierDirection, barrierObject: target } = this.getBarrierInfo(object, direction);
 
-                const { barrierDirection, barrierObject } = this.getBarrierInfo(object, direction);
+                if (barrierDirection) {
+                    const targetController = this.objectControllerMap(target);
+                    this.hit(object, target);
+                    this.hit(target, object);
 
+                    targetController.emit('moveAnswer', {
+                        type: 'redirect', 
+                        data: direction
+                    });
+                    controller.emit('moveAnswer', {
+                        type: 'redirect', 
+                        data: vector.reverse(barrierDirection)
+                    });
+
+                    if (object.hp > 0 && target.hp > 0) return tryMove();
+                }
+
+                this.move(object, direction);
                 controller.emit('moveAnswer', {
-                    type: barrierDirection ? 'fail' : 'ok',
-                    data: barrierDirection ? vector.reverse(barrierDirection) : null
+                    type: 'ok', data: null
                 });
-
-               return barrierDirection ? tryMove() : this.move(object, direction);
             }();
 
             await config.ticker();
