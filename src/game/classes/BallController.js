@@ -1,7 +1,7 @@
 import Emitter from 'promise-event-emitter';
 import vector from '../utils/vector';
 
-export default (config, {direction}) => {
+export default ({direction}) => {
     const emitter = new Emitter();    
 
     const getDirection = barrierDirection => 
@@ -18,10 +18,8 @@ export default (config, {direction}) => {
             const direction = getDirection(reason);
 
             emitter.emit('move', direction);
-            const answer = await emitter.once('moveAnswer');
-            return answer.type === 'ok' 
-                ? Promise.resolve() 
-                : waitMoveAndHandle(answer.data);
+            const [type, data] = await emitter.once('moveAnswer');
+            if (type === 'redirect') return waitMoveAndHandle(data.direction);
         }();
 
         return move();

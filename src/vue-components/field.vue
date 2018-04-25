@@ -18,5 +18,7 @@ export default {
 </template>
 
 <style>
-
+    #obj {
+        box-shadow: 0 0 0 5px inset, 0 0 5px 5px
+    }
 </style>

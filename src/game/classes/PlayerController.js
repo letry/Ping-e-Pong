@@ -14,9 +14,8 @@ export default ({keyEventMap}) => {
         await void async function waitMoveAndHandle() {
             const key = await waitExistKeys();
             emitter.emit('move', keyEventMap[key]);
-            const answer = await emitter.once('moveAnswer');
-            return answer.type === 'ok' 
-                ? Promise.resolve() : waitMoveAndHandle();
+            const [type] = await emitter.once('moveAnswer');
+            if (type === 'redirect') return waitMoveAndHandle();
         }();
 
         return move();
