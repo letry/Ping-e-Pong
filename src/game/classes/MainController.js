@@ -70,7 +70,7 @@ export default class extends FieldController {
                 controller.emit('moveAnswer', 'ok');
             }();
 
-            await config.ticker();
+            await config.ticker.tick();
         }
     }
 
