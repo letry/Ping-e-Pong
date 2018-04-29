@@ -5,7 +5,8 @@ export default class extends FieldController {
     constructor(field) {
         super(field);
         this.objectTickerMap = new Map();
-        this.objectControllerMap = new Map();        
+        this.objectControllerMap = new Map();
+        this.isStarted = false;
     }
 
     delete(object) {
@@ -38,7 +39,7 @@ export default class extends FieldController {
         const config = this.objectTickerMap.get(object);
         config.isRun = true;
 
-        while (config.isRun && object.hp > 0) {
+        while (this.isStarted && config.isRun && object.hp > 0) {
             const position = this.objectPositionMap(target);
             
             await void function tryMove(retries = 3) {

@@ -1,6 +1,6 @@
 export const byConfig = (config, prev = 0) => {
     const number = Math.random();
-    for (const {chance, value} of config) 
+    for (const [value, chance] of config) 
         if (number > prev && number < (prev += chance)) 
             return value;
 }
