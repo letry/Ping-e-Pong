@@ -1,6 +1,7 @@
 import bonusConfig from '../config/bonusConfig';
 import { inRange } from '../utils/random';
 
+
 export default class {
     constructor(mainController) {
         Object.assign(this, {
