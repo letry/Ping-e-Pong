@@ -11,7 +11,7 @@ export default {
       <table>
       <tr v-for="(row, rowIndex) of matrix" :key="rowIndex">
           <td v-for="(cell, cellIndex) of row" :key="cellIndex">
-              {{cell}}
+              {{cell || 1}}
           </td>
       </tr>
   </table>

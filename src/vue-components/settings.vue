@@ -1,14 +1,14 @@
 <script>
 export default {
   name: 'settings',
-  /*props: {
+  props: {
       width: Number,
       height: Number,
       theme: Array,
       difficult: Array,
       multiWall: Boolean,
       bonuses: Boolean
-  }*/
+  }
 }
 </script>
 
@@ -21,12 +21,22 @@ export default {
             
                 <div class="inputWrap">
                     <label for="tableWidth">Ширина поля</label>
-                    <input min="9" max="20" value="11" class="width" type="number" id="tableWidth">
+                    <input :value="width"
+                            @change="$emit('update:width', $event.target.value)" 
+                            min="9" max="20" 
+                            class="width"
+                            id="tableWidth"
+                            type="number">
                 </div>
-                
+            
                 <div class="inputWrap">
                     <label for="tableHeight">Высота поля</label>
-                    <input min="8" max="20" value="10" class="height" type="number" id="tableHeight">
+                    <input :value="height" 
+                            @change="$emit('update:height', $event.target.value)" 
+                            min="8" max="20" 
+                            class="height"
+                            id="tableHeight"
+                            type="number">
                 </div>
                 
                 <div class="inputWrap">

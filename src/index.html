@@ -8,7 +8,10 @@
 </head>
 <body>
     <div id="app">
-        <settings></settings>
+        <settings
+            :width.sync="width" 
+            :height.sync="height">
+        </settings>
         <game-field :matrix="matrix"></game-field>
     </div>
 </body>
