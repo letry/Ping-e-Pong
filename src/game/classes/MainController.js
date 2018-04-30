@@ -6,7 +6,7 @@ export default class extends FieldController {
         super(field);
         this.objectTickerMap = new Map();
         this.objectControllerMap = new Map();
-        this.isStarted = false;
+        this.isStarted = true;
     }
 
     delete(object) {

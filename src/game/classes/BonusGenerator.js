@@ -1,7 +1,6 @@
 import bonusConfig from '../config/bonusConfig';
 import { inRange } from '../utils/random';
 
-
 export default class {
     constructor(mainController) {
         Object.assign(this, {
@@ -19,6 +18,7 @@ export default class {
         this.tickerConfig.isRun = false;
     }
     start() {
+        this.tickerConfig.isRun = true;
         while(this.mainController.isStarted && this.tickerConfig.isRun) {
             
         }

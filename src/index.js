@@ -1,21 +1,16 @@
 import Vue from 'vue';
 import gameField from './vue-components/field.vue';
-import PromiseEmmiter, {PromisifyEventEmitter} from './game/classes/PromiseEmitter';
-global.PromiseEmmiter = PromiseEmmiter;
-global.PromisifyEventEmitter = PromisifyEventEmitter;
+import settings from './vue-components/settings.vue';
+import Field from './game/classes/Field';
 
 global.vue = new Vue({
     el: '#app',
     data: {
-        matrix: [
-            [1,2,3,4],
-            [1,2,3,4],
-            [1,2,3,4],
-            [2,3,4,5]
-        ]
+        matrix: new Field(10, 10)
     },
     components: {
-        gameField
+        gameField,
+        settings
     },
     methods: {
         handler(...args) {
