@@ -2,41 +2,72 @@
 export default {
   name: 'playerSettings',
   props: {
-      speed: Number,
-      width: Number,
-      wall: Number
+      points: Number,
+      speed: {
+        type: Number,
+        default: 1
+      },
+      width: {
+        type: Number,
+        default: 1
+      },
+      wall: {
+        type: Number,
+        default: 1
+      }
   },
-  data: () => ({
-
-  })
+  computed: {
+      residuePoints() {
+          return this.points - this.speed - this.width - this.wall;
+      }
+  },
+  methods: {
+      getMax(current) {
+          return Math.min(3, current + this.residuePoints);
+      }
+  }
 }
 </script>
 
 <template>
     <div class="startButtons">
-       <img src="img/interface/arrows.png">
-        <div class="player 1">
+        <!--<img src="img/interface/arrows.png">-->
+        <div>
             <div class="info">Игрок 1</div>
-            <div class="info countPoint">3</div>
+            <div class="info countPoint">{{residuePoints}}</div>
             
             <div class="speedlbl intface"></div>
-            <input type="number" min="1" max="3" class="speed" value="1">
+            <input type="number" 
+                min="1" 
+                :max="getMax(speed)" 
+                :value="speed"
+                @change="$emit('update:speed', +$event.target.value)">
             
             <div class="widthlbl intface"></div>
-            <input type="number" min="1" max="3" class="widthShield" value="1">
+            <input type="number" 
+                min="1"
+                :max="getMax(width)"
+                :value="width" 
+                @change="$emit('update:width', +$event.target.value)">
             
             <div class="walllbl intface"></div>
-            <input type="number" min="1" max="3" class="HP" value="1">
+            <input type="number" 
+                min="1" 
+                :max="getMax(wall)"
+                :value="wall" 
+                @change="$emit('update:wall', +$event.target.value)" >
             
             <button>Готов</button>
         </div>
-        
     </div>
 </template>
 
 <style>
+    .intface {
+        width: 18%;
+        float: left;
+    }
     .startButtons{
-        display: none;
         font-size: 25px;
         max-width: 200px
     }
@@ -53,7 +84,7 @@ export default {
         margin: 0 auto;
         display: block;
     }
-    .speedlbl {
+    /*.speedlbl {
         background: url(img/interface/Ispeed.png), rgba(70,255,255,0.9);
         background-size: cover;
         background-repeat: round;
@@ -67,5 +98,5 @@ export default {
         background: url(img/interface/Iwall.png), rgba(70,255,255,0.9);
         background-size: cover;
         background-repeat: round;
-    }
+    }*/
 </style>

@@ -18,6 +18,14 @@
             :multi-wall.sync="multiWall"
             :bonuses.sync="bonuses">
         </settings>
+        <template v-if="stage === 'prepare'">
+            <player-settings v-for="player of players" 
+                :wall.sync="player.wall"
+                :width.sync="player.width"
+                :speed.sync="player.speed"
+                :points="player.points">
+            </player-settings>
+        </template>
         <game-field :matrix="matrix"></game-field>
     </div>
 </body>

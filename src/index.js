@@ -1,21 +1,35 @@
 import Vue from 'vue';
 import gameField from './vue-components/field.vue';
 import settings from './vue-components/settings.vue';
+import playerSettings from './vue-components/playerSettings.vue';
+import MainController from './game/classes/MainController';
 
 global.Vue = Vue;
 global.vue = new Vue({
     el: '#app',
     components: {
         gameField,
-        settings
+        settings,
+        playerSettings
     },
     data: {
         stage: 'settings',
         matrix: Array.from({length: 10}, () => Array(10).fill(null)),
         theme: 'easy',
-        difficult: '1',        
+        difficult: '1',
         multiWall: false,
-        bonuses: false        
+        bonuses: false,
+        players: [{
+            points: 6,
+            width: 1,
+            wall: 1,
+            speed: 1
+        }, {
+            points: 6,
+            width: 1,
+            wall: 1,
+            speed: 1
+        }]
     },
     computed: {
         width: {
