@@ -4,11 +4,29 @@ export default {
   props: {
       width: Number,
       height: Number,
-      theme: Array,
-      difficult: Array,
+      theme: String,
+      difficult: String,
       multiWall: Boolean,
-      bonuses: Boolean
-  }
+      bonuses: Boolean,
+  },
+  data: () => ({
+    themes: [{
+        text: 'Упрощённая',
+        value: 'easy'
+    }, {
+        text: 'Классическая',
+        value: 'classic'
+    }, {
+        text: 'Анимированная',
+        value: 'animate'
+    }],
+    difficults: [
+        'Легко',
+        'Нормально',
+        'Сложно',
+        'Хардкор'
+    ]
+  })
 }
 </script>
 
@@ -41,35 +59,35 @@ export default {
                 
                 <div class="inputWrap">
                     <label>Тема</label>
-                    <select name="" id="theme">
-                        <option value="easy">Упрощённая</option>
-                        <option value="classic">Классическая</option>
-                        <option value="animate">Анимированная</option>
+                    <select :value="theme" @change="$emit('update:theme', $event.target.value)">
+                        <option v-for="option of themes" :value="option.value" :key="option.value">
+                            {{ option.text }}
+                        </option>
                     </select>
                 </div>
                 
                 <div class="inputWrap">
                     <label>Сложность</label>
-                    <select id="difficult">
-                        <option value="2">Нормально</option>
-                        <option value="1">Легко</option>
-                        <option value="3">Сложно</option>
-                        <option value="4">Хардкор</option>
+                    <select :value="difficult" @change="$emit('update:difficult', $event.target.value)">
+                        <option v-for="(text, index) in difficults" :value="index" :key="index">
+                            {{ text }}
+                        </option>
                     </select>
                 </div>
                 
                 <div class="inputWrap">
                     <label>Мульти-стена</label>
-                    <input type="checkbox" id="multiWall" value="1">
+                    <input type="checkbox" :checked="multiWall" @input="$emit('update:multiWall', !multiWall)">
                 </div>
                 
                 <div class="inputWrap">
                     <label>Бонусы</label>
-                    <input type="checkbox" id="bonuses" value="1">
+                    <input type="checkbox" :checked="bonuses" @input="$emit('update:bonuses', !bonuses)">
                 </div>
                 
-                <input type="button" class="submit" value="Начать игру">
-                
+                <button @click="$emit('start')">
+                    Начать игру
+                </button>           
             </div>
             
         </fieldset>
@@ -89,7 +107,7 @@ export default {
     fieldset .inputWrap label {
         float: left;
     }
-    .submit {
+    .button {
         margin-top: 5%;
     }
     fieldset .inputWrap input, select {

@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Ping-e-pong</title>
 </head>
 <body>
     <div id="app">
         <settings
-            :width.sync="width" 
-            :height.sync="height">
+            v-show="stage === 'settings'"
+            @start="start"
+            :width.sync="width"      
+            :height.sync="height"       
+            :theme.sync="theme"
+            :difficult.sync="difficult"
+            :multi-wall.sync="multiWall"
+            :bonuses.sync="bonuses">
         </settings>
         <game-field :matrix="matrix"></game-field>
     </div>
