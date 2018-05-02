@@ -42,7 +42,7 @@ export default class extends FieldController {
         while (this.isStarted && config.isRun && object.hp > 0) {
             const position = this.objectPositionMap(target);
             
-            await void function tryMove(retries = 3) {
+            await void async function tryMove(retries = 3) {
                 controller.emit('canMove');
                 const [direction] = await controller.once('move');
                 const { barrierDirection, barrierObject: target } = this.getBarrierInfo(object, direction);

@@ -6,9 +6,9 @@ export default {
   },
   methods: {
       getStyle(object) {
-          return {
-              
-          };
+          return object ? {
+              boxShadow: `0 0 0 ${object.protection * 2}px inset, 0 0 ${object.power}px`
+          } : null;
       }
   }
 }

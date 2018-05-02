@@ -9,7 +9,7 @@ export default class {
     add(object, [x, y]) {
         this.objectPositionMap.set(object, [x, y]);       
         return this.fieldMapper(object, (xi, yi) => {
-            return this.field[y + yi][x + xi] = object;
+            return this.field[y + yi].splice(x + xi, 1, object);
         });
     }
 
@@ -23,7 +23,7 @@ export default class {
     remove(object) {
         const [x, y] = this.objectPositionMap.get(object);
         this.fieldMapper(object, (xi, yi) => {
-            this.field[y + yi][x + xi] = null;
+            this.field[y + yi].splice(x + xi, 1, null);
         });
         return this.objectPositionMap.delete(object);
     }
