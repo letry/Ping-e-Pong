@@ -5,6 +5,7 @@ import playerSettings from './vue-components/playerSettings.vue';
 
 import MainController from './game/classes/MainController';
 import PlayerController from './game/classes/PlayerController';
+import BallController from './game/classes/BallController';
 import FieldObject from './game/classes/FieldObject';
 import Ticker from './game/utils/ticker';
 import config from './game/config/config.json';
@@ -71,9 +72,10 @@ global.vue = new Vue({
             const main = global.ctrl = new MainController(this.matrix);
             this.setBorders(main);
             this.setPlayers(main);
+            this.setBall(main);
         },
         setPlayers(main) {
-            const { player1, player2 } = config.controllers;
+            const { player1 } = config.controllers;
             const controller = PlayerController(player1);
             const ticker = Ticker(200);          
             const player = FieldObject('wall', {
@@ -84,6 +86,18 @@ global.vue = new Vue({
             main.bindController(player, controller);
             main.bindTicker(player, ticker);
             main.startTicker(player);
+        },
+        setBall(main) {
+            const controller = BallController({direction: [1, 1]});
+            const ticker = Ticker(200);          
+            const ball = FieldObject('ball', {
+                hp: Infinity,
+                width: 1
+            });
+            main.add(ball, [2, 2]);
+            main.bindController(ball, controller);
+            main.bindTicker(ball, ticker);
+            main.startTicker(ball);
         },
         setBorders(main) {
             const setWalls = (x, width, hp, protection) => {
@@ -98,7 +112,7 @@ global.vue = new Vue({
                     protection,
                     width
                 }), [x, this.matrix.length - 1]);
-            }
+            };
 
             if (this.multiWall)
                 for (let i = 0; i < this.matrix[0].length; i++)

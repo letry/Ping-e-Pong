@@ -32,13 +32,13 @@ export default class {
         const currentPosition = this.objectPositionMap.get(object);        
         const isDiagonal = direction.every(n => n);
         const checkingDirections = [direction];
-        let barrierObject;
+        let barrierObject = null;
                 
         if (isDiagonal) 
             checkingDirections.unshift(...[
                 vector.summ(direction, [1, 0]),
                 vector.summ(direction, [0, 1])
-            ])
+            ]);
         
         const barrierDirection = checkingDirections.find(checkingDir => {
             const nextPosition = vector.summ(currentPosition, checkingDir);

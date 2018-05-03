@@ -34,43 +34,34 @@ export default class extends FieldController {
             : this.objectTickerMap.set(object, newConfig);
     }
 
+    stopGame(ball) {
+        const position = this.objectPositionMap.get(ball);
+        for (const controller of this.objectControllerMap.values()) 
+            for (const eventName of controller.eventNames()) 
+                controller.off(eventName, 'reject', 'GameOver');
+    }
+
     async startTicker(object) {
         const controller = this.objectControllerMap.get(object);        
         const config = this.objectTickerMap.get(object);
         config.isRun = true;
 
         while (this.isStarted && config.isRun && object.hp > 0) {
-            const position = this.objectPositionMap.get(object);
             const tryMove = async (retries = 3) => {
                 controller.emit('canMove');
                 const [direction] = await controller.once('move');
                 const { barrierDirection, barrierObject: target } = this.getBarrierInfo(object, direction);
 
+                if (target === undefined && object.type === 'ball')
+                    return this.stopGame(object);
+
                 if (barrierDirection) {
-                    const targetController = this.objectControllerMap.get(target);
-                    const targetPosition = this.objectPositionMap.get(target);
-
-                    this.hit(object, target);
-                    this.hit(target, object);
-
-                    if (targetController)
-                        targetController.emit('moveAnswer', 'redirect', {
-                            direction,
-                            position: targetPosition
-                        });
-                    controller.emit('moveAnswer', 'redirect', {
-                        direction: vector.reverse(barrierDirection),
-                        position
-                    });
-
-                    if (object.hp > 0 && target.hp >= 0 && retries) 
+                    this.crashHandle(object, target, direction, barrierDirection)
+                    if (object.hp > 0 && target.hp >= 0) 
                         return tryMove(--retries);
-                    else {
-                        console.log(object, target, retries);
-                    }
                 }
 
-                this.move(object, direction);
+                if (retries && target !== undefined) this.move(object, direction);
                 controller.emit('moveAnswer', 'ok');
             }
             await tryMove();
@@ -81,5 +72,23 @@ export default class extends FieldController {
     stopTicker(object) {
         const config = this.objectTickerMap.get(object);
         return config ? !(config.isRun = false) : false;
+    }
+
+    redirect(object, direction) {
+        const controller = this.objectControllerMap.get(object);
+        const position = this.objectPositionMap.get(object);
+
+        return !controller ? false :
+            controller.emit('moveAnswer', 'redirect', {
+                direction, position
+            });
+
+    }
+
+    crashHandle(object, target, direction, barrierDirection) {
+        this.hit(object, target);
+        this.hit(target, object);
+        this.redirect(object, vector.reverse(barrierDirection));
+        this.redirect(target, direction);
     }
 }
