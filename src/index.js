@@ -4,7 +4,10 @@ import settings from './vue-components/settings.vue';
 import playerSettings from './vue-components/playerSettings.vue';
 
 import MainController from './game/classes/MainController';
+import PlayerController from './game/classes/PlayerController';
 import FieldObject from './game/classes/FieldObject';
+import Ticker from './game/utils/ticker';
+import config from './game/config/config.json';
 
 global.Vue = Vue;
 global.vue = new Vue({
@@ -66,7 +69,23 @@ global.vue = new Vue({
         start() {
             this.stage = 'prepare'; 
             const main = global.ctrl = new MainController(this.matrix);
-
+            this.setBorders(main);
+            this.setPlayers(main);
+        },
+        setPlayers(main) {
+            const { player1, player2 } = config.controllers;
+            const controller = PlayerController(player1);
+            const ticker = Ticker(200);          
+            const player = FieldObject('wall', {
+                hp: Infinity,
+                width: 1
+            });
+            main.add(player, [0, 1]);
+            main.bindController(player, controller);
+            main.bindTicker(player, ticker);
+            main.startTicker(player);
+        },
+        setBorders(main) {
             const setWalls = (x, width, hp, protection) => {
                 main.add(FieldObject('wall', {
                     hp,
@@ -86,8 +105,6 @@ global.vue = new Vue({
                     setWalls(i, 1, Infinity, 0);
             else
                 setWalls(0, this.matrix.length, Infinity, 0);
-
-            console.log();
         }
     }
 });

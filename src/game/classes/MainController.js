@@ -40,24 +40,24 @@ export default class extends FieldController {
         config.isRun = true;
 
         while (this.isStarted && config.isRun && object.hp > 0) {
-            const position = this.objectPositionMap(target);
-            
-            await void async function tryMove(retries = 3) {
+            const position = this.objectPositionMap.get(object);
+            const tryMove = async (retries = 3) => {
                 controller.emit('canMove');
                 const [direction] = await controller.once('move');
                 const { barrierDirection, barrierObject: target } = this.getBarrierInfo(object, direction);
 
                 if (barrierDirection) {
-                    const targetController = this.objectControllerMap(target);
-                    const targetPosition = this.objectPositionMap(target);
+                    const targetController = this.objectControllerMap.get(target);
+                    const targetPosition = this.objectPositionMap.get(target);
 
                     this.hit(object, target);
                     this.hit(target, object);
 
-                    targetController.emit('moveAnswer', 'redirect', {
-                        direction,
-                        position: targetPosition
-                    });
+                    if (targetController)
+                        targetController.emit('moveAnswer', 'redirect', {
+                            direction,
+                            position: targetPosition
+                        });
                     controller.emit('moveAnswer', 'redirect', {
                         direction: vector.reverse(barrierDirection),
                         position
@@ -65,12 +65,15 @@ export default class extends FieldController {
 
                     if (object.hp > 0 && target.hp >= 0 && retries) 
                         return tryMove(--retries);
+                    else {
+                        console.log(object, target, retries);
+                    }
                 }
 
                 this.move(object, direction);
                 controller.emit('moveAnswer', 'ok');
-            }();
-
+            }
+            await tryMove();
             await config.ticker.tick();
         }
     }

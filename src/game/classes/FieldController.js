@@ -52,8 +52,8 @@ export default class {
         return { barrierDirection, barrierObject };
     }
 
-    getObjectsInRange({ length, width }, [x, y]) {
-        return fieldMapper(object, (xi, yi) => {
+    getObjectsInRange(object, [x, y]) {
+        return this.fieldMapper(object, (xi, yi) => {
             return this.field[y + yi][x + xi];          
         });
     }

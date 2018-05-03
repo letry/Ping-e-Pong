@@ -13,7 +13,7 @@ export default ({keyEventMap}) => {
 
         await void async function waitMoveAndHandle() {
             const key = await waitExistKeys();
-            emitter.emit('move', keyEventMap[key]);
+            emitter.emit('move', key);
             const [type] = await emitter.once('moveAnswer');
             if (type === 'redirect') return waitMoveAndHandle();
         }();

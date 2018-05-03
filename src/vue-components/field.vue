@@ -1,4 +1,5 @@
 <script>
+import vector from '../game/utils/vector'
 export default {
   name: 'game-field',
   props: {
@@ -6,9 +7,19 @@ export default {
   },
   methods: {
       getStyle(object) {
-          return object ? {
-              boxShadow: `0 0 0 ${object.protection * 2}px inset, 0 0 ${object.power}px`
-          } : null;
+        const typesAdd = {
+            ball: [0, 70, 0],
+            player: [0, 0, 70]
+        }
+        const color = vector.summ(
+            Array(3).fill(Math.min((object.hp, 255) * 50)),
+            typesAdd[object.type] || Array(3).fill(0)
+        );
+            
+        return {
+            boxShadow: `0 0 0 ${object.protection * 2}px inset, 0 0 ${object.power}px`,
+            background: `rgb(${color})`
+        }
       }
   }
 }
@@ -18,7 +29,7 @@ export default {
       <table>
       <tr v-for="(row, rowIndex) of matrix" :key="rowIndex">
           <td v-for="(cell, cellIndex) of row"
-              :style="getStyle(cell)"
+              :style="cell ? getStyle(cell) : {}"
               :key="cellIndex">
           </td>
       </tr>
