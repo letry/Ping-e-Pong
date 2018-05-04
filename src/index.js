@@ -72,7 +72,9 @@ global.vue = new Vue({
             const main = global.ctrl = new MainController(this.matrix);
             this.setBorders(main);
             this.setPlayers(main);
-            this.setBall(main);
+            this.setBall(main, [1, 1], [1, 1]);
+            this.setBall(main, [7, 1], [-1, 1]);
+            this.addWall(main);
         },
         setPlayers(main) {
             const { player1 } = config.controllers;
@@ -82,22 +84,37 @@ global.vue = new Vue({
                 hp: Infinity,
                 width: 1
             });
-            main.add(player, [0, 1]);
+            main.add(player, [1, 3]);
             main.bindController(player, controller);
             main.bindTicker(player, ticker);
             main.startTicker(player);
         },
-        setBall(main) {
-            const controller = BallController({direction: [1, 1]});
-            const ticker = Ticker(200);          
+        setBall(main, xy, direction) {
+            const controller = BallController({direction});
+            const ticker = Ticker(1000);          
             const ball = FieldObject('ball', {
                 hp: Infinity,
-                width: 1
+                width: 1,
+                length: 1,
+                power: 1
             });
-            main.add(ball, [2, 2]);
+            main.add(ball, xy);
             main.bindController(ball, controller);
             main.bindTicker(ball, ticker);
             main.startTicker(ball);
+        },
+        addWall(main) {
+            main.add(FieldObject('wall', {
+                hp: 3,
+                protection: 0,
+                length: 8
+            }), [0, 1]);
+
+            main.add(FieldObject('wall', {
+                hp: 3,
+                protection: 0,
+                length: 8
+            }), [9, 1]);
         },
         setBorders(main) {
             const setWalls = (x, width, hp, protection) => {

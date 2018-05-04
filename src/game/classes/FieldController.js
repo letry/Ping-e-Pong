@@ -36,8 +36,8 @@ export default class {
                 
         if (isDiagonal) 
             checkingDirections.unshift(...[
-                vector.summ(direction, [1, 0]),
-                vector.summ(direction, [0, 1])
+                vector.multiply(direction, [1, 0]),
+                vector.multiply(direction, [0, 1])
             ]);
         
         const barrierDirection = checkingDirections.find(checkingDir => {

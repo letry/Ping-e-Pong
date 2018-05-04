@@ -15,7 +15,7 @@ export default ({direction}) => {
         await emitter.once('canMove');
 
         await void async function waitMoveAndHandle(reason) {
-            const direction = getDirection(reason);
+            direction = getDirection(reason);
 
             emitter.emit('move', direction);
             const [type, data] = await emitter.once('moveAnswer');

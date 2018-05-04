@@ -47,7 +47,7 @@ export default class extends FieldController {
         config.isRun = true;
 
         while (this.isStarted && config.isRun && object.hp > 0) {
-            const tryMove = async (retries = 3) => {
+            const tryMove = async (retries = 4) => {
                 controller.emit('canMove');
                 const [direction] = await controller.once('move');
                 const { barrierDirection, barrierObject: target } = this.getBarrierInfo(object, direction);
@@ -57,7 +57,7 @@ export default class extends FieldController {
 
                 if (barrierDirection) {
                     this.crashHandle(object, target, direction, barrierDirection)
-                    if (object.hp > 0 && target.hp >= 0) 
+                    if (object.hp > 0 && target.hp >= 0 && retries > 0) 
                         return tryMove(--retries);
                 }
 

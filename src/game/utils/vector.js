@@ -2,8 +2,8 @@ import bit from './bit';
 import common from './common';
 
 export default {
-    summ: (v1, v2) => v1.map((n, i) => n += v2[i]),
-    multiply: (v1, v2) => v1.map((n, i) => n *= v2[i]),
+    summ: (v1, v2) => v1.map((n, i) => n + v2[i]),
+    multiply: (v1, v2) => v1.map((n, i) => n * v2[i]),
     reverse: v => v.map(n => -n || 0),
     normalizeWith(v1, v2, min = -1, max = 1) {
         const finder = n => n < min || n > max;

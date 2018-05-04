@@ -12,7 +12,7 @@ export default {
             player: [0, 0, 70]
         }
         const color = vector.summ(
-            Array(3).fill(Math.min((object.hp, 255) * 50)),
+            Array(3).fill( Math.min(object.hp, 255) * 50 ),
             typesAdd[object.type] || Array(3).fill(0)
         );
             
