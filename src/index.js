@@ -91,7 +91,7 @@ global.vue = new Vue({
         },
         setBall(main, xy, direction) {
             const controller = BallController({direction});
-            const ticker = Ticker(1000);          
+            const ticker = Ticker(200);          
             const ball = FieldObject('ball', {
                 hp: Infinity,
                 width: 1,
