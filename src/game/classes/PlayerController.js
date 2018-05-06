@@ -2,7 +2,7 @@ import Emitter from 'promise-event-emitter';
 import Promisify from 'promisify-event-emitter'
 const docEmitter = new Promisify(document);
 
-export default ({keyEventMap}) => {
+export default (keyEventMap) => {
     const emitter = new Emitter();    
 
     const waitExistKeys = async () => 

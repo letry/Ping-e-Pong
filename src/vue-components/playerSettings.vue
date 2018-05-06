@@ -2,12 +2,13 @@
 export default {
   name: 'playerSettings',
   props: {
+      isReady: Boolean,      
       points: Number,
       speed: {
         type: Number,
         default: 1
       },
-      width: {
+      length: {
         type: Number,
         default: 1
       },
@@ -18,7 +19,7 @@ export default {
   },
   computed: {
       residuePoints() {
-          return this.points - this.speed - this.width - this.wall;
+          return this.points - this.speed - this.length - this.wall;
       }
   },
   methods: {
@@ -37,27 +38,32 @@ export default {
             <div class="info countPoint">{{residuePoints}}</div>
             
             <div class="speedlbl intface"></div>
-            <input type="number" 
+            <input type="number"
+                :disabled="isReady"
                 min="1" 
                 :max="getMax(speed)" 
                 :value="speed"
                 @change="$emit('update:speed', +$event.target.value)">
             
             <div class="widthlbl intface"></div>
-            <input type="number" 
+            <input type="number"
+                :disabled="isReady"
                 min="1"
-                :max="getMax(width)"
-                :value="width" 
-                @change="$emit('update:width', +$event.target.value)">
+                :max="getMax(length)"
+                :value="length" 
+                @change="$emit('update:length', +$event.target.value)">
             
             <div class="walllbl intface"></div>
             <input type="number" 
+                :disabled="isReady"
                 min="1" 
                 :max="getMax(wall)"
                 :value="wall" 
                 @change="$emit('update:wall', +$event.target.value)" >
             
-            <button>Готов</button>
+            <button :disabled="isReady" @click="$emit('update:is-ready', true)">
+                Готов
+            </button>
         </div>
     </div>
 </template>

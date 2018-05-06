@@ -28,10 +28,7 @@ export default class extends FieldController {
     }
 
     bindTicker(object, ticker) {
-        const existing = this.objectTickerMap.get(object);
-        const newConfig = { isRun: false, ticker };
-        return existing ? Object.assign(existing, newConfig)
-            : this.objectTickerMap.set(object, newConfig);
+        return this.objectTickerMap.set(object, ticker);
     }
 
     stopGame(ball) {
@@ -43,10 +40,10 @@ export default class extends FieldController {
 
     async startTicker(object) {
         const controller = this.objectControllerMap.get(object);        
-        const config = this.objectTickerMap.get(object);
-        config.isRun = true;
 
-        while (this.isStarted && config.isRun && object.hp > 0) {
+        while (this.isStarted && object.hp > 0) {
+            const ticker = this.objectTickerMap.get(object);
+            
             const tryMove = async (retries = 4) => {
                 controller.emit('canMove');
                 const [direction] = await controller.once('move');
@@ -65,13 +62,8 @@ export default class extends FieldController {
                 controller.emit('moveAnswer', 'ok');
             }
             await tryMove();
-            await config.ticker.tick();
+            await ticker.tick();
         }
-    }
-
-    stopTicker(object) {
-        const config = this.objectTickerMap.get(object);
-        return config ? !(config.isRun = false) : false;
     }
 
     redirect(object, direction) {

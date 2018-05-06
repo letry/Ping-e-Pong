@@ -8,9 +8,9 @@ import PlayerController from './game/classes/PlayerController';
 import BallController from './game/classes/BallController';
 import FieldObject from './game/classes/FieldObject';
 import Ticker from './game/utils/ticker';
+import { inRange } from './game/utils/random';
 import config from './game/config/config.json';
 
-global.Vue = Vue;
 global.vue = new Vue({
     el: '#app',
     components: {
@@ -27,15 +27,20 @@ global.vue = new Vue({
         bonuses: false,
         players: [{
             points: 6,
-            width: 1,
+            length: 1,
             wall: 1,
-            speed: 1
+            speed: 1,
+            isReady: false,
+            object: {}
         }, {
             points: 6,
-            width: 1,
+            length: 1,
             wall: 1,
-            speed: 1
-        }]
+            speed: 1,
+            isReady: false,
+            object: {}
+        }],
+        mainController: {}
     },
     computed: {
         width: {
@@ -44,7 +49,7 @@ global.vue = new Vue({
             },
             set(value) {
                 for(const row of this.matrix) 
-                    this.resize(row, value, () => null);
+                    this.resizeField(row, value, () => null);
             }
         },
         height: {
@@ -52,7 +57,7 @@ global.vue = new Vue({
                 return this.matrix.length;
             },
             set(value) {
-                this.resize(
+                this.resizeField(
                     this.matrix, value,
                     () => Array(this.matrix[0].length).fill(null)
                 );
@@ -60,82 +65,120 @@ global.vue = new Vue({
         }
     },
     methods: {
-        resize(array, newLength, value) {
+        resizeField(array, newLength, value) {
             const diff = newLength - array.length;
 
             return diff > 0
                 ? array.push(...Array.from({length: diff}, value))
                 : array.splice(newLength);
         },
-        start() {
+        setReady(player) {
+            player.isReady = true;
+            if (this.players.every(({isReady}) => isReady)) 
+                this.start();
+        },
+        setWallHp(player, hp) {
+            player.wall = hp;
+            const wallXindex = !this.players.indexOf(player) ? 0 : this.width - 1;
+            const yIterates = this.multiWall ? this.height - 1 : 2;
+            
+            for (let y = 1; y < yIterates; y++)
+                this.matrix[y][wallXindex].hp = hp;                
+        },
+        setSpeed(player, speed) {
+            player.speed = speed;
+            this.mainController.bindTicker(player.object, Ticker(500 / speed));
+        },
+        setPlayerLength(player, length) {
+            const main = this.mainController;
+            player.length = length;
+            const xIndex = !this.players.indexOf(player) ? 1 : this.width - 2;
+
+            main.remove(player.object);
+            player.object.length = length;   // todo не сбрасывать координаты
+            main.add(player.object, [xIndex, Math.floor(this.height / 2)]);
+        },
+        prepare() {
             this.stage = 'prepare'; 
-            const main = global.ctrl = new MainController(this.matrix);
-            this.setBorders(main);
-            this.setPlayers(main);
-            this.setBall(main, [1, 1], [1, 1]);
-            this.setBall(main, [7, 1], [-1, 1]);
-            this.addWall(main);
+            this.mainController = new MainController(this.matrix);
+            this.setBorders();
+
+            for (let i = 0; i < this.players.length; i++) {
+                const player = this.players[i];
+                this.addWall(player.wall, !i ? 0 : this.width - 1);
+                this.setPlayer(player);
+            }
         },
-        setPlayers(main) {
-            const { player1 } = config.controllers;
-            const controller = PlayerController(player1);
-            const ticker = Ticker(200);          
-            const player = FieldObject('wall', {
-                hp: Infinity,
-                width: 1
+        start() {
+            this.stage = 'play';
+            const ball = this.setBall([
+                Math.ceil(this.width / 2),
+                Math.ceil(this.height / 2)
+            ], [
+                inRange(0, 2) || -1,
+                inRange(0, 2) || -1
+            ]);
+
+            setTimeout(() => {
+                this.mainController.startTicker(ball);
+            }, 3e3);
+        },
+        setPlayer(player) {
+            const main = this.mainController;            
+            const playerIndex = this.players.indexOf(player);
+            const conf = config.controllers.players[playerIndex];
+            const controller = PlayerController(conf);        
+            player.object = FieldObject('wall', {
+                length: player.length,
+                hp: Infinity
             });
-            main.add(player, [1, 3]);
-            main.bindController(player, controller);
-            main.bindTicker(player, ticker);
-            main.startTicker(player);
+            this.setSpeed(player, player.speed);            
+
+            main.add(player.object, [
+                !playerIndex ? 1 : this.width - 2,
+                 Math.floor(this.height / 2)
+            ]);
+            main.bindController(player.object, controller);
+            main.startTicker(player.object);
         },
-        setBall(main, xy, direction) {
+        setBall(xy, direction) {
+            const main = this.mainController;
             const controller = BallController({direction});
             const ticker = Ticker(200);          
             const ball = FieldObject('ball', {
                 hp: Infinity,
                 width: 1,
                 length: 1,
-                power: 1
+                power: 3
             });
             main.add(ball, xy);
             main.bindController(ball, controller);
             main.bindTicker(ball, ticker);
-            main.startTicker(ball);
+            return ball;
         },
-        addWall(main) {
+        setBorders() {
+            const main = this.mainController;
             main.add(FieldObject('wall', {
-                hp: 3,
+                hp: Infinity,
                 protection: 0,
-                length: 8
-            }), [0, 1]);
+                width: this.width
+            }), [0, 0]);
 
             main.add(FieldObject('wall', {
-                hp: 3,
+                hp: Infinity,
                 protection: 0,
-                length: 8
-            }), [9, 1]);
+                width: this.width
+            }), [0, this.height - 1]);
         },
-        setBorders(main) {
-            const setWalls = (x, width, hp, protection) => {
-                main.add(FieldObject('wall', {
-                    hp,
-                    protection,
-                    width
-                }), [x, 0]);
-
-                main.add(FieldObject('wall', {
-                    hp,
-                    protection,
-                    width
-                }), [x, this.matrix.length - 1]);
-            };
-
-            if (this.multiWall)
-                for (let i = 0; i < this.matrix[0].length; i++)
-                    setWalls(i, 1, Infinity, 0);
-            else
-                setWalls(0, this.matrix.length, Infinity, 0);
+        addWall(hp, x) {
+            const block = this.multiWall ? this.height - 1 : 2;
+            for (let y = 1; y < block; y++) {
+                this.mainController.add(FieldObject('wall', {
+                    protection: 2,
+                    width: 1, hp,
+                    length: this.multiWall ? 1 : this.height - 2
+                }), [x, y]);
+            }
         }
     }
 });

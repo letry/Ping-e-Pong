@@ -11,6 +11,6 @@ export default (interval, tickIncrement = 0, { min = 0, max = Infinity } = {}) =
             if (nextInterval > min && nextInterval < max) 
                 interval = nextInterval;
             resolve();
-        }, interval))
+        }, interval));
     }
-})
+});

@@ -1,4 +1,3 @@
-import bit from './bit';
 import common from './common';
 
 export default {
