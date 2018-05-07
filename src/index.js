@@ -10,7 +10,7 @@ import FieldObject from './game/classes/FieldObject';
 import Ticker from './game/utils/ticker';
 import { inRange } from './game/utils/random';
 import config from './game/config/config.json';
-
+// todo вынести докэмиттер в window
 global.vue = new Vue({
     el: '#app',
     components: {
@@ -31,16 +31,16 @@ global.vue = new Vue({
             wall: 1,
             speed: 1,
             isReady: false,
-            object: {}
+            object: null
         }, {
             points: 6,
             length: 1,
             wall: 1,
             speed: 1,
             isReady: false,
-            object: {}
+            object: null
         }],
-        mainController: {}
+        mainController: null
     },
     computed: {
         width: {
@@ -98,18 +98,45 @@ global.vue = new Vue({
             player.object.length = length;   // todo не сбрасывать координаты
             main.add(player.object, [xIndex, Math.floor(this.height / 2)]);
         },
-        prepare() {
-            this.stage = 'prepare'; 
-            this.mainController = new MainController(this.matrix);
-            this.setBorders();
+        prepare(isReset) {
+            this.stage = 'prepare';
+
+            if (!this.mainController) 
+                this.mainController = new MainController(this.matrix);
+
+            if (!isReset) 
+                this.setBorders();
 
             for (let i = 0; i < this.players.length; i++) {
                 const player = this.players[i];
+                this.setPlayer(player);                
                 this.addWall(player.wall, !i ? 0 : this.width - 1);
-                this.setPlayer(player);
             }
         },
-        start() {
+        resetTo(stage) {
+            const main = this.mainController;
+            this.clearField();
+            this.prepare(true);
+
+            switch (stage) {
+                case 'settings':
+                    for (const player of this.players) player.object = null;
+                    for (const object of main.objectPositionMap.keys()) main.delete(object);
+                    this.stage = 'settings';
+                break;
+                case 'start':
+                    this.start();
+                break;
+            }
+        },
+        clearField() {
+            const main = this.mainController;
+            for (const object of main.objectPositionMap.keys()) 
+                if (object.type !== 'player' 
+                 && object.type !== 'border')
+                    main.delete(object);
+        },
+        async start() {
             this.stage = 'play';
             const ball = this.setBall([
                 Math.ceil(this.width / 2),
@@ -122,22 +149,36 @@ global.vue = new Vue({
             setTimeout(() => {
                 this.mainController.startTicker(ball);
             }, 3e3);
+
+            const [rightWon] = await this.mainController.emitter.once('GameOver');
+            this.players[+!rightWon].points++;
+            this.stage = 'gameOver';
         },
         setPlayer(player) {
             const main = this.mainController;            
             const playerIndex = this.players.indexOf(player);
             const conf = config.controllers.players[playerIndex];
-            const controller = PlayerController(conf);        
-            player.object = FieldObject('wall', {
-                length: player.length,
-                hp: Infinity
-            });
-            this.setSpeed(player, player.speed);            
+            const controller = PlayerController(conf);
 
-            main.add(player.object, [
-                !playerIndex ? 1 : this.width - 2,
-                 Math.floor(this.height / 2)
-            ]);
+            if (!player.object) {
+                player.object = FieldObject('player', {
+                    hp: Infinity
+                });
+
+                main.add(player.object, [
+                    !playerIndex ? 1 : this.width - 2,
+                     Math.floor(this.height / 2)
+                ]);
+            } else {
+                Object.assign(player, {
+                    isReady: false,
+                    protection: 0,
+                    power: 0
+                });
+            }
+
+            this.setPlayerLength(player, player.length);
+            this.setSpeed(player, player.speed);            
             main.bindController(player.object, controller);
             main.startTicker(player.object);
         },
@@ -158,13 +199,13 @@ global.vue = new Vue({
         },
         setBorders() {
             const main = this.mainController;
-            main.add(FieldObject('wall', {
+            main.add(FieldObject('border', {
                 hp: Infinity,
                 protection: 0,
                 width: this.width
             }), [0, 0]);
 
-            main.add(FieldObject('wall', {
+            main.add(FieldObject('border', {
                 hp: Infinity,
                 protection: 0,
                 width: this.width

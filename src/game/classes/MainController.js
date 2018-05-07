@@ -1,11 +1,13 @@
 import vector from '../utils/vector';
 import FieldController from './FieldController';
+import Emitter from 'promise-event-emitter';
 
 export default class extends FieldController {
     constructor(field) {
         super(field);
         this.objectTickerMap = new Map();
         this.objectControllerMap = new Map();
+        this.emitter = new Emitter();
         this.isStarted = true;
     }
 
@@ -32,10 +34,11 @@ export default class extends FieldController {
     }
 
     stopGame(ball) {
-        const position = this.objectPositionMap.get(ball);
+        const [leftLose] = this.objectPositionMap.get(ball);
         for (const controller of this.objectControllerMap.values()) 
             for (const eventName of controller.eventNames()) 
                 controller.off(eventName, 'reject', 'GameOver');
+        this.emitter.emit('GameOver', leftLose);
     }
 
     async startTicker(object) {
