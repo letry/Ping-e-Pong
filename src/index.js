@@ -87,7 +87,7 @@ global.vue = new Vue({
         },
         setSpeed(player, speed) {
             player.speed = speed;
-            this.mainController.bindTicker(player.object, Ticker(500 / speed));
+            this.mainController.bindTicker(player.object, Ticker(300 / speed));
         },
         setPlayerLength(player, length) {
             const main = this.mainController;

@@ -95,6 +95,9 @@ export default {
 </template>
 
 <style>
+    fieldset legend, label{
+        color: white;
+    }
     fieldset {
         max-width: 500px;
         margin: 1% auto;

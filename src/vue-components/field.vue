@@ -39,13 +39,11 @@ export default {
 <style>
     table {
         margin: 0 auto;
+        background: #999999;
     }
     td {
         width: 30px;
         height: 30px;
         border: 1px solid black;
-    }
-    #obj {
-        box-shadow: 0 0 0 5px inset, 0 0 5px 5px
     }
 </style>

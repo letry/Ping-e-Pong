@@ -15,7 +15,8 @@ export default {
       wall: {
         type: Number,
         default: 1
-      }
+      },
+      index: Number
   },
   computed: {
       residuePoints() {
@@ -32,77 +33,74 @@ export default {
 
 <template>
     <div class="startButtons">
-        <!--<img src="img/interface/arrows.png">-->
-        <div>
-            <div class="info">Игрок 1</div>
-            <div class="info countPoint">{{residuePoints}}</div>
+        <header>Игрок {{index + 1}}<br>{{!index ? 'WASD' : '↑↓→←'}}</header>
+        <div class="interfaceWrapper">
+            <span>{{residuePoints}}</span>
             
-            <div class="speedlbl intface"></div>
-            <input type="number"
-                :disabled="isReady"
-                min="1" 
-                :max="getMax(speed)" 
-                :value="speed"
-                @change="$emit('update:speed', +$event.target.value)">
+            <div>
+                <img src="../img/interface/Ispeed.png">
+                <input type="number"
+                    :disabled="isReady"
+                    min="1" 
+                    :max="getMax(speed)" 
+                    :value="speed"
+                    @change="$emit('update:speed', +$event.target.value)">
+            </div>
             
-            <div class="widthlbl intface"></div>
-            <input type="number"
-                :disabled="isReady"
-                min="1"
-                :max="getMax(length)"
-                :value="length" 
-                @change="$emit('update:length', +$event.target.value)">
+            <div>
+                <img src="../img/interface/Iwidth.png">
+                <input type="number"
+                    :disabled="isReady"
+                    min="1"
+                    :max="getMax(length)"
+                    :value="length" 
+                    @change="$emit('update:length', +$event.target.value)">
+            </div>
             
-            <div class="walllbl intface"></div>
-            <input type="number" 
-                :disabled="isReady"
-                min="1" 
-                :max="getMax(wall)"
-                :value="wall" 
-                @change="$emit('update:wall', +$event.target.value)" >
-            
-            <button :disabled="isReady" @click="$emit('update:is-ready', true)">
-                Готов
-            </button>
+            <div>
+                <img src="../img/interface/Iwall.png">
+                <input type="number" 
+                    :disabled="isReady"
+                    min="1" 
+                    :max="getMax(wall)"
+                    :value="wall" 
+                    @change="$emit('update:wall', +$event.target.value)">
+            </div>
         </div>
+        <button :disabled="isReady" @click="$emit('update:is-ready', true)">
+            Готов
+        </button>
     </div>
 </template>
 
 <style>
-    .intface {
-        width: 18%;
-        float: left;
-    }
-    .startButtons{
+    .startButtons {
         font-size: 25px;
-        max-width: 200px
+        max-width: 200px;
+        text-align: center;
     }
-    .startButtons input{
-        float: left;
-        font-size: 25px;
-        width: 82%;
+    .startButtons > * {
+        padding: 8px;
+        background: white;
     }
-    .startButtons input[type="button"]{
+    .startButtons * {
+        font-size: inherit;
+    }
+    .startButtons > div {
+        background: #999999;        
+    }
+    .startButtons > button {
         width: 100%;
     }
-    .startButtons > img {
-        width: 50%;
-        margin: 0 auto;
+    .interfaceWrapper > span {
         display: block;
+        margin-bottom: 2%;
     }
-    /*.speedlbl {
-        background: url(img/interface/Ispeed.png), rgba(70,255,255,0.9);
-        background-size: cover;
-        background-repeat: round;
+    .interfaceWrapper > div {
+        display: flex;        
     }
-    .widthlbl {
-        background: url(img/interface/Iwidth.png), rgba(70,255,255,0.9);
-        background-size: cover;
-        background-repeat: round;
+    .interfaceWrapper input {
+        width: 65%;
+        margin-left: 3%;        
     }
-    .walllbl {
-        background: url(img/interface/Iwall.png), rgba(70,255,255,0.9);
-        background-size: cover;
-        background-repeat: round;
-    }*/
 </style>
