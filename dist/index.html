@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ping-e-pong</title>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <span>{{message ? message : title}}</span>
+        </header>
+        <settings
+            v-show="stage === 'settings'"
+            @start="prepare"
+            :width.sync="width"      
+            :height.sync="height"       
+            :theme.sync="theme"
+            :difficult.sync="difficult"
+            :multi-wall.sync="multiWall"
+            :bonuses.sync="bonuses">
+        </settings>
+        <div class="mainLine">
+            <div><game-field :matrix="matrix"></game-field></div>
+            <template v-if="stage === 'prepare'">
+                <player-settings v-for="(player, index) of players"
+                    :index="index"
+                    :is-ready.sync="player.isReady"
+                    @update:is-ready="setReady(player)"
+                    :wall="player.wall"
+                    @update:wall="setWallHp(player, $event)"
+                    :length="player.length"
+                    @update:length="setPlayerLength(player, $event)"                
+                    :speed="player.speed"
+                    @update:speed="setSpeed(player, $event)"
+                    :points="player.points">
+                </player-settings>
+            </template>
+        </div>
+        <div v-show="stage === 'gameOver'" class="footerWrap">
+            <button @click="resetTo('prepare')">Настроить игроков</button>
+            <button @click="resetTo('start')">Начать заново</button>
+            <button @click="resetTo('settings')">Настроить поле</button>
+        </div>
+    </div>
+    <style>
+        html{
+            background: rgb(0, 86, 65);
+        }
+        body {
+            margin: 0;
+        }
+        #app > * {
+            margin-bottom: 1%;
+        }
+        #app > header {
+            height: 40px;
+            background: #999999;
+            font-size: 40px;
+            color: whitesmoke;
+            text-align: center;
+            padding-bottom: 7px;
+        }
+        .footerWrap {
+            display: flex;
+            justify-content: center;
+        }
+        .footerWrap > button {
+            width: 217px;
+            text-align: center;
+            margin: 0 1%;
+        }
+        .mainLine {
+            display: flex;
+            justify-content: space-around;
+        }
+        .mainLine > div:first-child {
+            order: 1
+        }
+        .mainLine > div:last-child {
+            order: 3
+        }
+    </style>
+<script type="text/javascript" src="main.js"></script></body>
+</html>
