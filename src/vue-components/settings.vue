@@ -59,7 +59,7 @@ export default {
                 
                 <div class="inputWrap">
                     <label>Тема</label>
-                    <select :value="theme" @change="$emit('update:theme', $event.target.value)">
+                    <select disabled :value="theme" @change="$emit('update:theme', $event.target.value)">
                         <option v-for="option of themes" :value="option.value" :key="option.value">
                             {{ option.text }}
                         </option>
@@ -81,8 +81,8 @@ export default {
                 </div>
                 
                 <div class="inputWrap">
-                    <label>Бонусы</label>
-                    <input type="checkbox" :checked="bonuses" @input="$emit('update:bonuses', !bonuses)">
+                    <label>Бонусы (скоро...)</label>
+                    <input disabled type="checkbox" :checked="bonuses" @input="$emit('update:bonuses', !bonuses)">
                 </div>
                 
                 <button @click="$emit('start')">

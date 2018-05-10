@@ -86,4 +86,10 @@ export default class extends FieldController {
         this.redirect(object, vector.reverse(barrierDirection));
         this.redirect(target, direction);
     }
+
+    clear(saveTypes = []) {
+        for (const object of this.objectPositionMap.keys()) 
+            if (!saveTypes.includes(object.type))
+                this.delete(object);
+    }
 }

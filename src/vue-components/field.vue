@@ -8,11 +8,11 @@ export default {
   methods: {
       getStyle(object) {
         const typesAdd = {
-            ball: [0, 70, 0],
-            player: [0, 0, 70]
+            ball: [100, -100, -100],
+            player: [-70, -70, 70]
         }
         const color = vector.summ(
-            Array(3).fill( Math.min(object.hp, 255) * 50 ),
+            Array(3).fill( Math.min(object.hp * 50, 255) ),
             typesAdd[object.type] || Array(3).fill(0)
         );
             
@@ -40,6 +40,7 @@ export default {
     table {
         margin: 0 auto;
         background: #999999;
+        border-collapse: collapse;
     }
     td {
         width: 30px;

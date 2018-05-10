@@ -9,7 +9,7 @@
 <body>
     <div id="app">
         <header>
-            <div class="head-block">Пинг-е-Понг</div>
+            <span>{{message ? message : title}}</span>
         </header>
         <settings
             v-show="stage === 'settings'"
@@ -54,7 +54,7 @@
         #app > * {
             margin-bottom: 1%;
         }
-        .head-block {
+        #app > header {
             height: 40px;
             background: #999999;
             font-size: 40px;
